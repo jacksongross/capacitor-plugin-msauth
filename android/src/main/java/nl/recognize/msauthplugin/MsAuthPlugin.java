@@ -72,24 +72,19 @@ public class MsAuthPlugin extends Plugin {
                 }
             }
 
-            this.acquireToken(
-                    context,
-                    call.getArray("scopes").toList(),
-                    prompt,
-                    tokenResult -> {
-                        if (tokenResult != null) {
-                            JSObject result = new JSObject();
-                            result.put("accessToken", tokenResult.getAccessToken());
-                            result.put("idToken", tokenResult.getIdToken());
-                            JSONArray scopes = new JSONArray(Arrays.asList(tokenResult.getScopes()));
-                            result.put("scopes", scopes);
+            this.acquireToken(context, call.getArray("scopes").toList(), prompt, (tokenResult) -> {
+                if (tokenResult != null) {
+                    JSObject result = new JSObject();
+                    result.put("accessToken", tokenResult.getAccessToken());
+                    result.put("idToken", tokenResult.getIdToken());
+                    JSONArray scopes = new JSONArray(Arrays.asList(tokenResult.getScopes()));
+                    result.put("scopes", scopes);
 
-                            call.resolve(result);
-                        } else {
-                            call.reject("Unable to obtain access token");
-                        }
-                    }
-                );
+                    call.resolve(result);
+                } else {
+                    call.reject("Unable to obtain access token");
+                }
+            });
         } catch (Exception ex) {
             Logger.error("Unable to login: " + ex.getMessage(), ex);
             call.reject("Unable to fetch access token.");
